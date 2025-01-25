@@ -46,31 +46,31 @@ You can find examples of the node in action and generated images in these folder
 - [Generated Image Examples](imagegen%20examples/) - Showcases the output quality across different styles:
 
 ### Anime Style
-<img src="imagegen examples/anime.png" width="512" alt="Anime style example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/anime.png" width="512" alt="Anime style example">
 
 ### Bauhaus Style
-<img src="imagegen examples/bauhaus.png" width="512" alt="Bauhaus style example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/bauhaus.png" width="512" alt="Bauhaus style example">
 
 ### Charcoal Drawing
-<img src="imagegen examples/charcoal.png" width="512" alt="Charcoal drawing example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/charcoal.png" width="512" alt="Charcoal drawing example">
 
 ### Cyberpunk Style
-<img src="imagegen examples/cyberpunk.png" width="512" alt="Cyberpunk style example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/cyberpunk.png" width="512" alt="Cyberpunk style example">
 
 ### Low Poly Art
-<img src="imagegen examples/lowpoly.png" width="512" alt="Low poly art example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/lowpoly.png" width="512" alt="Low poly art example">
 
 ### Pixel Art
-<img src="imagegen examples/pixelart.png" width="512" alt="Pixel art example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/pixelart.png" width="512" alt="Pixel art example">
 
 ### Steampunk Style
-<img src="imagegen examples/steampunk.png" width="512" alt="Steampunk style example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/steampunk.png" width="512" alt="Steampunk style example">
 
 ### Street Art
-<img src="imagegen examples/streetart.png" width="512" alt="Street art example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/streetart.png" width="512" alt="Street art example">
 
 ### Surreal Art
-<img src="imagegen examples/surreal.png" width="512" alt="Surreal art example">
+<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/surreal.png" width="512" alt="Surreal art example">
 
 ## Prerequisites
 

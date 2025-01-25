@@ -1,31 +1,76 @@
 # ComfyUI LLM Prompt Enhancer
 
-A powerful custom node for ComfyUI that enhances your prompts using various Language Learning Models (LLMs). This node supports multiple LLM providers and offers various enhancement styles to help you create better, more detailed prompts for image generation.
+A powerful custom node for ComfyUI that enhances your prompts using various Language Learning Models (LLMs). This node seamlessly integrates with both Stable Diffusion and SDXL models through ComfyUI, providing intelligent prompt enhancement for any image generation workflow.
 
-## Features
+## 🌟 Key Features
 
-- 🤖 Multiple LLM Provider Support:
-  - OpenAI (GPT models)
-  - Anthropic (Claude)
-  - Google (Gemini)
+- 🤖 **Multiple LLM Provider Support**:
+  - OpenAI (GPT-4 Turbo Preview)
+  - Anthropic (Claude 3.5 Sonnet)
+  - Google (Gemini Pro)
   - OpenRouter (Multiple Models)
   - Ollama (Local LLM)
-- 🎨 50+ Enhancement Styles organized in categories:
-  - No Style
+- 🎨 **50+ Enhancement Styles** organized in categories:
   - Core Styles (detailed, photorealistic, etc.)
   - Fantasy & Horror
   - Modern Aesthetics
   - Art Movements
-  - Asian Art Styles (anime, studio ghibli, ukiyo-e, sumi-e)
+  - Asian Art Styles
   - Traditional Media
   - Digital & Contemporary
   - Photography & Studio
   - Decorative Arts
   - Period & Style
-- 🔒 Secure API Key Management
-- 🚀 Easy Integration with ComfyUI
-- 📝 Detailed Prompt Enhancement
-- 🛠️ Local LLM Support via Ollama
+- 🔒 **Secure API Key Management**
+- 🚀 **Universal Compatibility**:
+  - Works with all Stable Diffusion models
+  - Full SDXL support
+  - Compatible with custom models
+  - Seamless ComfyUI integration
+- 📝 **Intelligent Prompt Enhancement**:
+  - Context-aware improvements
+  - Style-specific optimizations
+  - Technical detail enhancement
+- 🛠️ **Local LLM Support** via Ollama
+- 💡 **Smart Workflow Integration**:
+  - Direct CLIP input/output
+  - Chainable with other nodes
+  - Flexible prompt routing
+
+## 📁 Example Galleries
+
+You can find examples of the node in action and generated images in these folders:
+
+- [Node Usage Examples](examples/) - Contains examples of the node being used in ComfyUI workflows with various styles:
+
+- [Generated Image Examples](imagegen%20examples/) - Showcases the output quality across different styles:
+
+### Anime Style
+<img src="imagegen examples/anime.png" width="512" alt="Anime style example">
+
+### Bauhaus Style
+<img src="imagegen examples/bauhaus.png" width="512" alt="Bauhaus style example">
+
+### Charcoal Drawing
+<img src="imagegen examples/charcoal.png" width="512" alt="Charcoal drawing example">
+
+### Cyberpunk Style
+<img src="imagegen examples/cyberpunk.png" width="512" alt="Cyberpunk style example">
+
+### Low Poly Art
+<img src="imagegen examples/lowpoly.png" width="512" alt="Low poly art example">
+
+### Pixel Art
+<img src="imagegen examples/pixelart.png" width="512" alt="Pixel art example">
+
+### Steampunk Style
+<img src="imagegen examples/steampunk.png" width="512" alt="Steampunk style example">
+
+### Street Art
+<img src="imagegen examples/streetart.png" width="512" alt="Street art example">
+
+### Surreal Art
+<img src="imagegen examples/surreal.png" width="512" alt="Surreal art example">
 
 ## Prerequisites
 
@@ -142,6 +187,25 @@ pip install openai anthropic google-generativeai torch requests
    - Choose your model (default: llama3.2:1b)
 
 7. Connect the enhanced prompt output to your image generation node
+
+## Model Compatibility
+
+### Stable Diffusion Support
+- All SD 1.x models
+- All SD 2.x models
+- SDXL Base and Refiner
+- Custom fine-tuned models
+- Dreamshaper series
+- Deliberate series
+- Realistic Vision series
+- And many more!
+
+### Workflow Integration
+- Direct compatibility with CLIP text encoders
+- Works with both positive and negative prompts
+- Can be chained with other prompt processing nodes
+- Supports batch processing
+- Compatible with LoRA and embedding injection
 
 ## Style Categories
 

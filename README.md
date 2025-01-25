@@ -41,36 +41,36 @@ A powerful custom node for ComfyUI that enhances your prompts using various Lang
 
 You can find examples of the node in action and generated images in these folders:
 
-- [Node Usage Examples](examples/) - Contains examples of the node being used in ComfyUI workflows with various styles:
+- [Node Usage Examples](examples/](https://collection.cloudinary.com/di7ctlowx/9fcb39a68533169bad5f827c2f5af279) - Contains examples of the node being used in ComfyUI workflows with various styles:
 
-- [Generated Image Examples](imagegen%20examples/) - Showcases the output quality across different styles:
+- [Generated Image Examples](imagegen%20examples/](https://collection.cloudinary.com/di7ctlowx/f5a8d0a031bae9e113af3d487f802bb8) - Showcases the output quality across different styles:
 
 ### Anime Style
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/anime.png" width="512" alt="Anime style example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794108/anime_fhcwcj.png" width="512" alt="Anime style example">
 
 ### Bauhaus Style
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/bauhaus.png" width="512" alt="Bauhaus style example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794108/bauhaus_jmh9yf.png" width="512" alt="Bauhaus style example">
 
 ### Charcoal Drawing
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/charcoal.png" width="512" alt="Charcoal drawing example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794110/charcoal_vul1ao.png" width="512" alt="Charcoal drawing example">
 
 ### Cyberpunk Style
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/cyberpunk.png" width="512" alt="Cyberpunk style example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794109/cyberpunk_cp6eli.png" width="512" alt="Cyberpunk style example">
 
 ### Low Poly Art
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/lowpoly.png" width="512" alt="Low poly art example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794108/lowpoly_gdsyrc.png" width="512" alt="Low poly art example">
 
 ### Pixel Art
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/pixelart.png" width="512" alt="Pixel art example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794108/pixelart_k0qw1c.png" width="512" alt="Pixel art example">
 
 ### Steampunk Style
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/steampunk.png" width="512" alt="Steampunk style example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794110/steampunk_qs1b63.png" width="512" alt="Steampunk style example">
 
 ### Street Art
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/streetart.png" width="512" alt="Street art example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794110/streetart_spy0va.png" width="512" alt="Street art example">
 
 ### Surreal Art
-<img src="https://raw.githubusercontent.com/sizzlebop/comfyui-llm-prompt-enhancer/main/imagegen%20examples/surreal.png" width="512" alt="Surreal art example">
+<img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794111/surreal_sizr42.png" width="512" alt="Surreal art example">
 
 ## Prerequisites
 

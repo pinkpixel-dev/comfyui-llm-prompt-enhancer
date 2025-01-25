@@ -1,0 +1,7 @@
+openai>=1.0.0
+anthropic>=0.5.0
+google-generativeai>=0.3.0
+torch>=2.0.0
+requests>=2.31.0
+openrouter-client>=0.3.0
+openrouter>=0.3.0

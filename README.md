@@ -23,7 +23,7 @@ A powerful custom node for ComfyUI that enhances your prompts using various Lang
   - Period & Style
 - 🔒 **Secure API Key Management**
 - 🚀 **Universal Compatibility**:
-  - Works with all Stable Diffusion models
+  - Works with all Flux and Stable Diffusion models
   - Full SDXL support
   - Compatible with custom models
   - Seamless ComfyUI integration

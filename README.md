@@ -1,6 +1,6 @@
 # ComfyUI LLM Prompt Enhancer
 
-A powerful custom node for ComfyUI that enhances your prompts using various Language Learning Models (LLMs). This node seamlessly integrates with both Stable Diffusion and SDXL models through ComfyUI, providing intelligent prompt enhancement for any image generation workflow.
+A powerful custom node for ComfyUI that enhances your prompts using various Language Learning Models (LLMs). This node seamlessly integrates with both Flux and SDXL models through ComfyUI, providing intelligent prompt enhancement for any image generation workflow.
 
 ## 🌟 Key Features
 
@@ -24,7 +24,7 @@ A powerful custom node for ComfyUI that enhances your prompts using various Lang
 - 🔒 **Secure API Key Management**
 - 🚀 **Universal Compatibility**:
   - Works with all Flux and Stable Diffusion models
-  - Full SDXL support
+  - Full Flux & SDXL support
   - Compatible with custom models
   - Seamless ComfyUI integration
 - 📝 **Intelligent Prompt Enhancement**:
@@ -190,15 +190,9 @@ pip install openai anthropic google-generativeai torch requests
 
 ## Model Compatibility
 
-### Stable Diffusion Support
-- All SD 1.x models
-- All SD 2.x models
-- SDXL Base and Refiner
+### FLux and Stable Diffusion Support
+- All Flux & SDXL models
 - Custom fine-tuned models
-- Dreamshaper series
-- Deliberate series
-- Realistic Vision series
-- And many more!
 
 ### Workflow Integration
 - Direct compatibility with CLIP text encoders

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+    <!-- Main background circle -->
+    <circle cx="200" cy="200" r="180" fill="#FFE5F4"/>
+    
+    <!-- Speech bubble group -->
+    <g>
+        <!-- Main bubble -->
+        <path d="M280 160 
+                 C280 91.635 226.365 36 158 36
+                 C89.635 36 36 91.635 36 160
+                 C36 228.365 89.635 284 158 284
+                 L158 320
+                 L200 284
+                 C226.365 284 280 228.365 280 160Z" 
+              fill="#FF69B4"/>
+        
+        <!-- Heart in bubble -->
+        <path d="M158 120
+                 C158 120 140 100 120 100
+                 C95 100 95 130 95 130
+                 C95 150 158 190 158 190
+                 C158 190 221 150 221 130
+                 C221 130 221 100 196 100
+                 C176 100 158 120 158 120Z"
+              fill="#FFF"/>
+    </g>
+    
+    <!-- Smaller decorative circles -->
+    <circle cx="300" cy="250" r="40" fill="#FF69B4" opacity="0.6"/>
+    <circle cx="340" cy="280" r="25" fill="#FF69B4" opacity="0.4"/>
+    <circle cx="360" cy="300" r="15" fill="#FF69B4" opacity="0.2"/>
+</svg>

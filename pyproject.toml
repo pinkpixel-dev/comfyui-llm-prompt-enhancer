@@ -1,53 +1,15 @@
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
 [project]
-name = "comfyui-prompt-enhancer"
-version = "1.2.9"
+name = "comfyui-llm-prompt-enhancer"
 description = "A ComfyUI node for enhancing prompts using various LLM providers"
-readme = "README.md"
-authors = [
-    { name = "Pink Pixel", email = "admin@pinkpixel.dev" }
-]
-license = { text = "MIT" }
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-]
-keywords = ["comfyui", "llm", "prompt", "ai", "enhancement"]
-dependencies = [
-    "openai>=1.0.0",
-    "anthropic>=0.5.0",
-    "google-generativeai>=0.3.0",
-    "torch>=2.0.0",
-    "requests>=2.31.0"
-]
-requires-python = ">=3.8"
+version = "1.1.0"
+license = {file = "LICENSE"}
+dependencies = ["openai>=1.0.0", "anthropic>=0.5.0", "google-generativeai>=0.3.0", "torch>=2.0.0", "requests>=2.31.0", "openrouter-client>=0.3.0", "openrouter>=0.3.0"]
 
 [project.urls]
-Homepage = "http://pinkpixel.dev"
-Repository = "https://github.com/sizzlebop/comfyui-llm-prompt-enhancer"
-"Bug Tracker" = "https://github.com/sizzlebop/comfyui-llm-prompt-enhancer/issues"
+Repository = "https://github.com/pinkpixel-dev/comfyui-llm-prompt-enhancer"
+#  Used by Comfy Registry https://comfyregistry.org
 
-[tool.setuptools]
-packages = ["comfyui_llm_prompt_enhancer"]
-
-[tool.setuptools.package-data]
-comfyui_llm_prompt_enhancer = ["config/*", "js/*"]
-
-[tool.black]
-line-length = 100
-target-version = ["py310"]
-
-[tool.isort]
-profile = "black"
-line_length = 100
-multi_line_output = 3
-
-Made with ❤️ by pinkpixel
+[tool.comfy]
+PublisherId = "pinkpixel-dev"
+DisplayName = "ComfyUI LLM Prompt Enhancer"
+Icon = "https://res.cloudinary.com/di7ctlowx/image/upload/v1738065925/promptenhancelogo_kql6qa.svg"

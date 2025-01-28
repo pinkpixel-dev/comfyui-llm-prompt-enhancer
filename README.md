@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1738065925/promptenhancelogo_kql6qa.svg" width="200" height="200">
+</p>
+
 # ComfyUI LLM Prompt Enhancer
 
 A powerful custom node for ComfyUI that enhances your prompts using various Language Learning Models (LLMs). This node seamlessly integrates with both Flux and SDXL models through ComfyUI, providing intelligent prompt enhancement for any image generation workflow.

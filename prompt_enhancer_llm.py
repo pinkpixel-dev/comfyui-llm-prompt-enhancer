@@ -79,6 +79,15 @@ except ImportError as e:
     logger.error(f"Error importing requests: {e}")
     requests = None
 
+try:
+    # Try relative import first
+    from .prompts import get_system_prompt
+    from . import models
+except ImportError:
+    # If that fails, try direct import
+    from prompts import get_system_prompt
+    import models
+
 class PromptEnhancer:
     def __init__(self):
         logger.info("Initializing PromptEnhancer")
@@ -201,13 +210,20 @@ class PromptEnhancer:
                 "style": (all_styles, {"default": "Basic Styles > none"}),
             },
             "optional": {
+                # Optional so existing saved workflows keep loading. They fall
+                # back to the defaults below instead of needing the node
+                # deleted and re-added.
+                "prompt_format": (["descriptive", "tags"], {"default": "descriptive"}),
                 "openai_key": ("STRING", {"multiline": False, "default": ""}),
+                "openai_model": (models.OPENAI_MODELS, {"default": models.OPENAI_DEFAULT}),
                 "anthropic_key": ("STRING", {"multiline": False, "default": ""}),
+                "anthropic_model": (models.ANTHROPIC_MODELS, {"default": models.ANTHROPIC_DEFAULT}),
                 "google_key": ("STRING", {"multiline": False, "default": ""}),
+                "google_model": (models.GOOGLE_MODELS, {"default": models.GOOGLE_DEFAULT}),
                 "openrouter_key": ("STRING", {"multiline": False, "default": ""}),
-                "openrouter_model": ("STRING", {"multiline": False, "default": "google/gemma-2-9b-it:free"}),
+                "openrouter_model": ("STRING", {"multiline": False, "default": models.OPENROUTER_DEFAULT}),
                 "ollama_host": ("STRING", {"multiline": False, "default": ""}),
-                "ollama_model": ("STRING", {"multiline": False, "default": "llama3.2:1b"})
+                "ollama_model": ("STRING", {"multiline": False, "default": models.OLLAMA_DEFAULT})
             }
         }
 
@@ -223,10 +239,12 @@ class PromptEnhancer:
     def DISPLAY_NAME(cls):
         return "Prompt Enhancer LLM "
 
-    def enhance_prompt(self, clip, prompt, llm_provider, style, 
-                      openai_key="", anthropic_key="", google_key="",
-                      openrouter_key="", openrouter_model="google/gemma-2-9b-it:free",
-                      ollama_host="http://localhost:11434", ollama_model="llama3.2:1b"):
+    def enhance_prompt(self, clip, prompt, llm_provider, style, prompt_format="descriptive",
+                      openai_key="", openai_model=models.OPENAI_DEFAULT,
+                      anthropic_key="", anthropic_model=models.ANTHROPIC_DEFAULT,
+                      google_key="", google_model=models.GOOGLE_DEFAULT,
+                      openrouter_key="", openrouter_model=models.OPENROUTER_DEFAULT,
+                      ollama_host=models.OLLAMA_HOST_DEFAULT, ollama_model=models.OLLAMA_DEFAULT):
         """Enhance the input prompt using the specified LLM provider and style."""
         try:
             if llm_provider == "none":
@@ -238,6 +256,9 @@ class PromptEnhancer:
             # Skip if it's a category header
             if enhancement_style.startswith('[') and enhancement_style.endswith(']'):
                 enhancement_style = "detailed"  # Use default if category header is somehow selected
+
+            system_prompt = get_system_prompt(prompt_format, llm_provider)
+            user_prompt = f"{self.style_prompts[enhancement_style]} {prompt}"
             
             # Handle each provider
             if llm_provider == "openai":
@@ -245,10 +266,10 @@ class PromptEnhancer:
                     raise ValueError("OpenAI API key is required")
                 client = OpenAI(api_key=openai_key)
                 response = client.chat.completions.create(
-                    model="gpt-4-turbo-preview",
+                    model=openai_model,
                     messages=[
-                        {"role": "system", "content": "You are an expert at writing image generation prompts. Convert the input into a clear, descriptive prompt that directly describes the desired image. Focus on nouns, adjectives, and visual elements. Do not reference specific characters, shows, movies or books unless asked to do so. Do not include instructions like 'create', 'make', or 'generate'. Do not start the prompt with imagine or create.Format the output as a simple description. Keep it to 5 sentences. Set descriptiveness to medium. Plain text output only. No formatting. Only the prompt itself no additional text. Do not use quotations. Output to stable diffusion."},
-                        {"role": "user", "content": f"{self.style_prompts[enhancement_style]} {prompt}"}
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
                     ],
                     max_tokens=200,
                     temperature=0.7
@@ -260,10 +281,10 @@ class PromptEnhancer:
                     raise ValueError("Anthropic API key is required")
                 client = anthropic.Client(api_key=anthropic_key)
                 response = client.messages.create(
-                    model="claude-3.5-sonnet",
+                    model=anthropic_model,
                     max_tokens=200,
                     messages=[
-                        {"role": "user", "content": f"You are an expert at writing image generation prompts. Convert the input into a clear, descriptive prompt that directly describes the desired image. Focus on nouns, adjectives, and visual elements. Do not reference specific characters, shows, movies or books unless asked to do so. Do not include instructions like 'create', 'make', or 'generate'. Do not start the prompt with imagine or create.Format the output as a simple description. Keep it to 5 sentences. Set descriptiveness to medium. Plain text output only. No formatting. Only the prompt itself no additional text. Do not use quotations. Output to stable diffusion.\n\n{self.style_prompts[enhancement_style]} {prompt}"}
+                        {"role": "user", "content": f"{system_prompt}\n\n{user_prompt}"}
                     ]
                 )
                 enhanced_prompt = response.content[0].text.strip()
@@ -272,9 +293,9 @@ class PromptEnhancer:
                 if not google_key:
                     raise ValueError("Google API key is required")
                 genai_client.configure(api_key=google_key)
-                model = genai_client.GenerativeModel('gemini-pro')
+                model = genai_client.GenerativeModel(google_model)
                 response = model.generate_content(
-                    f"You are an expert at writing image generation prompts. Convert the input into a clear, descriptive prompt that directly describes the desired image. Focus on nouns, adjectives, and visual elements. Do not reference specific characters, shows, movies or books unless asked to do so. Do not include instructions like 'create', 'make', or 'generate'. Do not start the prompt with imagine or create.Format the output as a simple description. Keep it to 5 sentences. Set descriptiveness to medium. Plain text output only. No formatting. Only the prompt itself no additional text. Do not use quotations. Output to stable diffusion.\n\n{self.style_prompts[enhancement_style]} {prompt}"
+                    f"{system_prompt}\n\n{user_prompt}"
                 )
                 enhanced_prompt = response.text.strip()
                 
@@ -283,8 +304,8 @@ class PromptEnhancer:
                     raise ValueError("Requests package is required for Ollama support")
                 
                 # Use provided host or default
-                host = ollama_host.strip() if ollama_host.strip() else "http://localhost:11434"
-                model_name = ollama_model.strip() if ollama_model.strip() else "llama3.2:1b"
+                host = ollama_host.strip() if ollama_host.strip() else models.OLLAMA_HOST_DEFAULT
+                model_name = ollama_model.strip() if ollama_model.strip() else models.OLLAMA_DEFAULT
                 
                 logger.info(f"Using Ollama host: {host}, model: {model_name}")
                 
@@ -292,10 +313,7 @@ class PromptEnhancer:
                 success, message = self._test_ollama_connection(host, model_name)
                 if not success:
                     raise ValueError(f"Ollama connection failed: {message}")
-                
-                system_prompt = "You are an expert at writing image generation prompts. Convert the input into a clear, descriptive prompt that directly describes the desired image. Focus on nouns, adjectives, and visual elements. Do not include instructions like 'create', 'make', or 'generate'. Format the output as a simple description. Start with the focus object of the prompt. Use no more than 5 sentences. Set descriptiveness to medium. Plain text output only. No formatting. Only the prompt itself no additional text. Do not use quotations. Output to stable diffusion."
-                user_prompt = f"{self.style_prompts[enhancement_style]} {prompt}"
-                
+                                
                 url = f"{host}/api/generate"
                 payload = {
                     "model": model_name,
@@ -326,8 +344,8 @@ class PromptEnhancer:
                     response = self.clients[llm_provider].chat_completions(
                         model=openrouter_model,
                         messages=[
-                            {"role": "system", "content": "You are an expert at writing image generation prompts. Convert the input into a clear, descriptive prompt that directly describes the desired image. Focus on nouns, adjectives, and visual elements. Do not reference specific characters, shows, movies or books unless asked to do so. Do not include instructions like 'create', 'make', or 'generate'. Do not start the prompt with imagine or create.Format the output as a simple description. Keep it to 5 sentences. Set descriptiveness to medium. Plain text output only. No formatting. Only the prompt itself no additional text. Do not use quotations. Output to stable diffusion."},
-                            {"role": "user", "content": f"{self.style_prompts[enhancement_style]} {prompt}"}
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": user_prompt}
                         ],
                         temperature=0.7
                     )

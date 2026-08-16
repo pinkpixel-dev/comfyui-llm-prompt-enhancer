@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - August 16, 2026
+
+### 📄 Docs
+- Rewrote the README. It had drifted a long way from the actual node
+  - Fixed a dead link. The OpenRouter key page was pointed at `console.openrouter.com`, which no longer resolves
+  - Fixed the two example gallery links, which had malformed markdown and rendered broken
+  - Corrected the style count from "50+" to the actual 47, and replaced the category list in Features, which named four categories that do not exist
+  - Removed `howls castle` from the documented styles since it is not in the dropdown
+  - Updated every model reference to match the current lists in `models.py`
+  - Updated stale provider URLs (`makersuite.google.com` → `aistudio.google.com`, `ollama.ai` → `ollama.com`) and switched the clone and issues links to the canonical `pinkpixel-dev` org
+  - Documented `prompt_format` and the per-provider model dropdowns
+  - Removed the "Secure API Key Management" feature claim and replaced it with a plain note that keys are saved into the workflow JSON, so they travel with any shared workflow
+  - Added a contributing note about running the test suite and keeping new node inputs optional
+
 ## [1.2.0] - August 16, 2026
 
 ### ✨ Prompt format toggle

@@ -4,50 +4,28 @@
 
 # ComfyUI LLM Prompt Enhancer
 
-A powerful custom node for ComfyUI that enhances your prompts using various Language Learning Models (LLMs). This node seamlessly integrates with both Flux and SDXL models through ComfyUI, providing intelligent prompt enhancement for any image generation workflow.
+A ComfyUI node that rewrites your prompt with an LLM before it reaches the CLIP encoder. You type something short, pick a style, and the node hands your image model a fuller prompt to work with.
 
-## 🌟 Key Features
+It takes a CLIP input and returns conditioning plus the enhanced prompt as text, so you can drop it straight into an existing workflow or chain it with other nodes.
 
-- 🤖 **Multiple LLM Provider Support**:
-  - OpenAI (GPT-4 Turbo Preview)
-  - Anthropic (Claude 3.5 Sonnet)
-  - Google (Gemini Pro)
-  - OpenRouter (Multiple Models)
-  - Ollama (Local LLM)
-- 🎨 **50+ Enhancement Styles** organized in categories:
-  - Core Styles (detailed, photorealistic, etc.)
-  - Fantasy & Horror
-  - Modern Aesthetics
-  - Art Movements
-  - Asian Art Styles
-  - Traditional Media
-  - Digital & Contemporary
-  - Photography & Studio
-  - Decorative Arts
-  - Period & Style
-- 🔒 **Secure API Key Management**
-- 🚀 **Universal Compatibility**:
-  - Works with all Flux and Stable Diffusion models
-  - Full Flux & SDXL support
-  - Compatible with custom models
-  - Seamless ComfyUI integration
-- 📝 **Intelligent Prompt Enhancement**:
-  - Context-aware improvements
-  - Style-specific optimizations
-  - Technical detail enhancement
-- 🛠️ **Local LLM Support** via Ollama
-- 💡 **Smart Workflow Integration**:
-  - Direct CLIP input/output
-  - Chainable with other nodes
-  - Flexible prompt routing
+## What it does
 
-## 📁 Example Galleries
+- **Five providers**: OpenAI, Anthropic, Google, OpenRouter, and Ollama for local models
+- **Two output formats**:
+  - `descriptive` writes flowing sentences describing the image
+  - `tags` writes comma separated SDXL and Danbooru style tags
+- **47 enhancement styles** across 9 categories, from `photorealistic` to `ukiyo-e` to `vaporwave`
+- **Model picker per provider**, so you can trade cost against quality without editing code
+- **Runs fully local through Ollama** if you would rather not send prompts to an API
+- **Falls back to your original prompt** if the API call fails, so a bad key or a rate limit doesn't break the run
+- Works with Flux and Stable Diffusion, including SDXL and custom fine-tunes
 
-You can find examples of the node in action and generated images in these folders:
+## Example gallery
 
-- [Node Usage Examples](examples/](https://collection.cloudinary.com/di7ctlowx/9fcb39a68533169bad5f827c2f5af279) - Contains examples of the node being used in ComfyUI workflows with various styles:
+Two Cloudinary collections with more than fits here:
 
-- [Generated Image Examples](imagegen%20examples/](https://collection.cloudinary.com/di7ctlowx/f5a8d0a031bae9e113af3d487f802bb8) - Showcases the output quality across different styles:
+- [Node usage examples](https://collection.cloudinary.com/di7ctlowx/9fcb39a68533169bad5f827c2f5af279) shows the node wired into ComfyUI workflows
+- [Generated image examples](https://collection.cloudinary.com/di7ctlowx/f5a8d0a031bae9e113af3d487f802bb8) shows output across different styles
 
 ### Anime Style
 <img src="https://res.cloudinary.com/di7ctlowx/image/upload/v1737794108/anime_fhcwcj.png" width="512" alt="Anime style example">
@@ -80,208 +58,187 @@ You can find examples of the node in action and generated images in these folder
 
 - ComfyUI installed and working
 - Python 3.10 or higher
-- pip (Python package installer)
-- For Ollama: Ollama installed and running locally
+- pip
+- An API key for at least one provider, or Ollama running locally
 
 ## Installation
 
-1. Navigate to your ComfyUI custom nodes directory:
+Navigate to your ComfyUI custom nodes directory:
 
 ```bash
 cd ComfyUI/custom_nodes/
 ```
 
-2. Clone this repository:
+Clone the repository:
 
 ```bash
-git clone https://github.com/sizzlebop/ComfyUI-LLM-Prompt-Enhancer.git
+git clone https://github.com/pinkpixel-dev/comfyui-llm-prompt-enhancer.git
 ```
 
-3. Install required dependencies:
+Install the dependencies:
 
 ```bash
 pip install openai anthropic google-generativeai torch requests
 ```
 
-## LLM Provider Setup
+Restart ComfyUI. The node shows up as **Prompt Enhancer LLM ✨** under `conditioning/prompt`.
 
-### 1. OpenAI
-- Visit [OpenAI Platform](https://platform.openai.com/api-keys)
-- Click "Create new secret key"
-- Copy the key and enter it in the node's "openai_key" input
-- Uses GPT-4 Turbo Preview model
-- Pricing: Pay-as-you-go, varies by model
+You only need the packages for providers you actually use. The node imports each one in a try block and logs a message if it is missing, so a missing `anthropic` package will not stop the other providers from working.
 
-### 2. Anthropic
-- Visit [Anthropic Console](https://console.anthropic.com/)
-- Create an account and go to API Keys
-- Generate a new API key
-- Copy the key and enter it in the node's "anthropic_key" input
-- Uses Claude 3.5 Sonnet model
-- Pricing: Pay-as-you-go, varies by model
+## Provider setup
 
-### 3. Google
-- Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-- Create a new project if needed
-- Enable the Gemini API
-- Create credentials and copy the API key
-- Enter it in the node's "google_key" input
-- Uses Gemini Pro model
-- Pricing: Free tier available, then pay-as-you-go
+### OpenAI
 
-### 4. OpenRouter
-- Visit [OpenRouter Console](https://console.openrouter.com/)
-- Create an account
-- Generate a new API key
-- Copy the key and enter it in the node's "openrouter_key" input
-- Enter your desired model name in the "openrouter_model" input
-- Pricing: 
-  - Free tier available with some models
-  - Other models: Pay-as-you-go, varies by model
+Grab a key from the [OpenAI Platform](https://platform.openai.com/api-keys) and paste it into the node's `openai_key` input.
 
-### 5. Ollama (Local LLM)
-- Install Ollama from [ollama.ai](https://ollama.ai)
-- Start the Ollama service:
-  ```bash
-  # Windows (PowerShell, run as administrator)
-  ollama serve
-  ```
-- Pull your desired model:
-  ```bash
-  # Default model is llama3.2:1b
-  ollama pull llama3.2:1b
-  ```
-- Configuration in the node:
-  - "ollama_host": Default is "http://localhost:11434"
-  - "ollama_model": Default is "llama3.2:1b"
-  - Other recommended models: gemma2:2b, qwen2.5:1.5b, llama3.2:3b
-- No API key required
-- Completely free and runs locally
+Models available in the `openai_model` dropdown:
+
+| Model | Notes |
+|---|---|
+| `gpt-5.6-sol` | Flagship, most expensive |
+| `gpt-5.6-terra` | Middle tier |
+| `gpt-5.6-luna` | Cost optimized, the default |
+
+### Anthropic
+
+Create a key in the [Anthropic Console](https://console.anthropic.com/) and paste it into `anthropic_key`.
+
+| Model | Notes |
+|---|---|
+| `claude-opus-5` | Flagship |
+| `claude-sonnet-5` | Middle tier |
+| `claude-haiku-4-5` | Fastest and cheapest, the default |
+
+### Google
+
+Create a key in [Google AI Studio](https://aistudio.google.com/app/apikey) and paste it into `google_key`. There is a free tier before it moves to pay as you go.
+
+| Model | Notes |
+|---|---|
+| `gemini-3.1-pro-preview` | Flagship, 2M context |
+| `gemini-3.7-flash` | Newest workhorse |
+| `gemini-3.6-flash` | Previous workhorse |
+| `gemini-3.5-flash-lite` | Low latency, the default |
+| `gemini-3.1-flash-lite` | Cheapest |
+
+### OpenRouter
+
+Create a key at [openrouter.ai/keys](https://openrouter.ai/keys) and paste it into `openrouter_key`.
+
+OpenRouter exposes thousands of models, so `openrouter_model` is a plain text field rather than a dropdown. Type any model ID from their catalog. The default is `google/gemma-4-26b-a4b-it:free`, which costs nothing to run.
+
+Model IDs ending in `:free` have no token cost but are usually rate limited.
+
+### Ollama
+
+For local models with no API key and no per token cost. Install Ollama from [ollama.com](https://ollama.com), then start it:
+
+```bash
+ollama serve
+```
+
+Pull a model:
+
+```bash
+ollama pull llama3.2:1b
+```
+
+Then set `ollama_host` (default `http://localhost:11434`) and `ollama_model` (default `llama3.2:1b`) in the node. Other small models that work well here: `gemma2:2b`, `qwen2.5:1.5b`, `llama3.2:3b`.
+
+The node checks the connection before sending anything, so if Ollama is not running you get a clear error instead of a timeout.
 
 ## Usage
 
-1. Add the "LLM Prompt Enhancer" node to your workflow
-2. Connect your CLIP model to the "clip" input
-3. Enter your prompt in the "prompt" input field
-4. Select your preferred LLM provider from:
-   - openai (GPT-5.6 family)
-   - anthropic (Claude 5 family)
-   - google (Gemini 3 family)
-   - openrouter (custom models)
-   - ollama (local models)
-5. Choose an enhancement style from the categorized dropdown
-6. Pick a `prompt_format`:
-   - `descriptive` (default) writes flowing sentences describing the image
-   - `tags` writes comma separated SDXL / Danbooru style tags
-7. Configure your chosen provider:
+1. Add the **Prompt Enhancer LLM ✨** node to your workflow
+2. Connect your CLIP model to the `clip` input
+3. Type your prompt into the `prompt` field
+4. Pick a provider in `llm_provider`
+5. Pick a style from the `style` dropdown
+6. Set `prompt_format` to `descriptive` or `tags`
+7. Fill in the API key and model for your chosen provider
+8. Connect the `conditioning` output to your sampler, and `enhanced_prompt` anywhere you want to see the text
 
-   **For OpenAI:**
-   - Enter your OpenAI API key
-   - Pick a model: `gpt-5.6-sol`, `gpt-5.6-terra`, or `gpt-5.6-luna` (default)
+If you want to compare against an unenhanced prompt, select the `Basic Styles > none` style. That skips the style instructions, though the format enhancement still runs.
 
-   **For Anthropic:**
-   - Enter your Anthropic API key
-   - Pick a model: `claude-opus-5`, `claude-sonnet-5`, or `claude-haiku-4-5` (default)
+### A note on model defaults
 
-   **For Google:**
-   - Enter your Google API key
-   - Pick a model: `gemini-3.1-pro-preview`, `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.5-flash-lite` (default), or `gemini-3.1-flash-lite`
+Every provider defaults to its cheap tier. Prompt enhancement is a short task with maybe 200 tokens of output, and the small models handle it well, so there is usually no reason to pay flagship rates. Move up if you want richer output.
 
-   **For OpenRouter:**
-   - Enter your OpenRouter API key
-   - Enter your desired model name (default: google/gemma-4-26b-a4b-it:free)
+Providers rename and retire models fairly often. If one starts returning a 404, the lists live in [`models.py`](models.py) and are easy to edit.
 
-   **For Ollama:**
-   - Ensure Ollama is running
-   - Optionally modify the host URL (default: http://localhost:11434)
-   - Choose your model (default: llama3.2:1b)
+### About your API keys
 
-8. Connect the enhanced prompt output to your image generation node
+Keys are entered as normal node inputs, which means ComfyUI saves them into the workflow JSON. If you share a workflow file or post a screenshot, your key goes with it. Clear the key fields before sharing anything, or use Ollama, which needs no key at all.
 
-> **A note on model defaults:** each provider defaults to its cheap, fast tier. Prompt
-> enhancement is a short task and the small models handle it well, so there is usually no
-> reason to pay for a flagship. Bump up to the larger models if you want richer output.
->
-> Providers rename and retire models fairly often. If a model starts returning a 404, check
-> [`models.py`](models.py) and update the list there.
+## Style categories
 
-## Model Compatibility
-
-### FLux and Stable Diffusion Support
-- All Flux & SDXL models
-- Custom fine-tuned models
-
-### Workflow Integration
-- Direct compatibility with CLIP text encoders
-- Works with both positive and negative prompts
-- Can be chained with other prompt processing nodes
-- Supports batch processing
-- Compatible with LoRA and embedding injection
-
-## Style Categories
-
-The LLM Prompt Enhancer supports various art styles organized into the following categories:
+47 styles across 9 categories. Pick one from the `style` dropdown, where they appear as `Category > style`.
 
 - **Basic Styles**: none, detailed, photorealistic, cinematic, artistic, minimalist, vibrant
 - **Fantasy & Horror**: fantasy, horror, dark fantasy, heavenly
 - **Traditional Art**: oil painting, watercolor, abstract expressionist, hyperrealist, cubist
 - **Art Movements**: art nouveau, art deco, baroque, renaissance, pop art, bauhaus, romanticist, dada
-- **Asian Art Styles**: anime, studio ghibli, ukiyo-e, sumi-e, howls castle
+- **Asian Art Styles**: anime, studio ghibli, ukiyo-e, sumi-e
 - **Traditional Media**: oil painting, watercolor, pencil sketch, charcoal drawing, pastel art
 - **Digital & Contemporary**: 3d render, digital art, concept art, comic book, pixel art, low poly, isometric
 - **Genre & Theme**: cyberpunk, steampunk, gothic, vaporwave, retro, vintage
 - **Decorative Arts**: stained glass, mosaic, street art
 
-Each style comes with specific technical specifications and artistic elements that help guide the AI in enhancing your prompts.
+Each style carries its own set of technical instructions that get prepended to your prompt. Selecting `none` skips the style layer and just runs the format enhancement.
 
 ## Troubleshooting
 
-### OpenAI Issues
-- Error "Authentication failed": Double-check your API key
-- Error "Rate limit exceeded": Wait or upgrade your plan
-- Error "Invalid model": Ensure you have access to the requested model
+The node logs to the ComfyUI console under the `prompt_enhancer` logger, so start there when something looks off.
 
-### Anthropic Issues
-- Error "Invalid API key": Verify your key is correct
-- Error "Rate limit reached": Check your usage limits
-- Error "Model not available": Ensure you have access to Claude
+**The node doesn't appear in the menu.** Check the ComfyUI startup log for import errors. Missing Python packages are the usual cause.
 
-### Google Issues
-- Error "API key not valid": Check your key and project setup
-- Error "Quota exceeded": Review your usage limits
-- Error "API not enabled": Enable Gemini API in your project
+**Enhancement silently does nothing.** When an API call fails the node returns your original prompt rather than erroring the whole run. The reason is in the console log.
 
-### OpenRouter Issues
-- Error "Authentication failed": Verify your API key
-- Error "Model not available": Check model availability and credits
-- Error "Rate limit": Review your usage and limits
+### OpenAI
+- "Authentication failed": check the key
+- "Rate limit exceeded": wait, or check your plan
+- "Invalid model": confirm your account has access to the selected model
 
-### Ollama Issues
-- Error "Connection failed": 
-  - Ensure Ollama is running (`ollama serve`)
-  - Check if the host URL is correct
-  - Verify your firewall settings
-- Error "Model not found":
-  - Pull the model first: `ollama pull llama3.2:1b`
-  - Check available models: `ollama list`
-- Error "Invalid response":
-  - Check Ollama logs for details
-  - Ensure you have enough system resources
+### Anthropic
+- "Invalid API key": check the key
+- "Rate limit reached": check your usage limits
+- "Model not found": confirm the model ID is still current
+
+### Google
+- "API key not valid": check the key and project setup
+- "Quota exceeded": review your usage limits
+- "API not enabled": enable the Gemini API for your project
+
+### OpenRouter
+- "Authentication failed": check the key
+- "Model not available": confirm the model ID exists and your account has credits
+- Rate limits on `:free` models are common. Switch to a paid model if you hit them often
+
+### Ollama
+- "Connection failed": make sure `ollama serve` is running, check the host URL, check your firewall
+- "Model not found": pull it first with `ollama pull llama3.2:1b`, and see what you have with `ollama list`
+- "Empty response from Ollama": usually a resource problem. Check the Ollama logs and try a smaller model
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. For anything large, open an issue first so we can talk it through.
+
+There is a test suite that runs without any API keys:
+
+```bash
+python3 test_prompt_enhancer.py
+```
+
+It covers prompt format routing, the model lists, and the node's input definitions. Please run it before opening a PR. Adding a required input to `INPUT_TYPES` will break every saved workflow, so new inputs belong in `optional` with a default.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT. See [LICENSE](LICENSE).
 
 ## Support
 
-If you encounter any issues or have questions:
-
-- GitHub Issues: [Report a bug](https://github.com/sizzlebop/comfyui-llm-prompt-enhancer/issues)
+- GitHub Issues: [Report a bug](https://github.com/pinkpixel-dev/comfyui-llm-prompt-enhancer/issues)
 - Email: admin@pinkpixel.dev
 - Discord: @sizzlebop
 
-Made with ❤️ by pinkpixel
+Made with 💖 by Pink Pixel

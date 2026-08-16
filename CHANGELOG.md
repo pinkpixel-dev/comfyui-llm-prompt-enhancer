@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - August 16, 2026
+
+### ✨ Prompt format toggle
+- Added a `prompt_format` input with two modes, contributed by [@MasOverflow](https://github.com/MasOverflow) in [#2](https://github.com/pinkpixel-dev/comfyui-llm-prompt-enhancer/pull/2)
+  - `descriptive` keeps the existing flowing-sentence output
+  - `tags` produces comma separated SDXL / Danbooru style tags
+- Works across all five providers: OpenAI, Anthropic, Google, Ollama, OpenRouter
+- The input is optional, so existing saved workflows keep loading and default to `descriptive`
+
+### 🤖 Model selection
+- Added `openai_model`, `anthropic_model`, and `google_model` dropdowns so you can pick per provider instead of being stuck on one hardcoded model
+- Refreshed every model ID. The old ones were retired and had started returning 404:
+  - OpenAI: `gpt-4-turbo-preview` → `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` (default `gpt-5.6-luna`)
+  - Anthropic: `claude-3.5-sonnet` (never a valid ID) → `claude-opus-5` / `claude-sonnet-5` / `claude-haiku-4-5` (default `claude-haiku-4-5`)
+  - Google: `gemini-pro` → `gemini-3.1-pro-preview` / `gemini-3.7-flash` / `gemini-3.6-flash` / `gemini-3.5-flash-lite` / `gemini-3.1-flash-lite` (default `gemini-3.5-flash-lite`)
+- Defaults point at each provider's cheap tier, which handles prompt enhancement well at a fraction of the cost
+
+### 🐛 Fixes
+- Fixed the OpenRouter default model. `google/gemma-2-9b-it:free` was retired and no longer resolves; the default is now `google/gemma-4-26b-a4b-it:free`
+- Ollama keeps its original descriptive wording ("Start with the focus object of the prompt"), which the shared prompt had dropped
+
+### 🧹 Maintenance
+- Split system prompts into `prompts.py` and model lists into `models.py` to keep `prompt_enhancer_llm.py` maintainable
+- Added `test_prompt_enhancer.py` covering prompt selection, model list integrity, node inputs, and backward compatibility
+- Added `__pycache__/` and `*.pyc` to `.gitignore`
+
 ## [1.1.0] - 2025-01-24
 
 ### Added

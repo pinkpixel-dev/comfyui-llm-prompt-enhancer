@@ -1,3 +1,5 @@
 .windsurfrules
 style_instructions.txt
 display_styles.py
+__pycache__/
+*.pyc

@@ -164,33 +164,46 @@ pip install openai anthropic google-generativeai torch requests
 2. Connect your CLIP model to the "clip" input
 3. Enter your prompt in the "prompt" input field
 4. Select your preferred LLM provider from:
-   - openai (GPT-4 Turbo Preview)
-   - anthropic (Claude 3.5 Sonnet)
-   - google (Gemini Pro)
+   - openai (GPT-5.6 family)
+   - anthropic (Claude 5 family)
+   - google (Gemini 3 family)
    - openrouter (custom models)
    - ollama (local models)
 5. Choose an enhancement style from the categorized dropdown
-6. Configure your chosen provider:
+6. Pick a `prompt_format`:
+   - `descriptive` (default) writes flowing sentences describing the image
+   - `tags` writes comma separated SDXL / Danbooru style tags
+7. Configure your chosen provider:
 
    **For OpenAI:**
    - Enter your OpenAI API key
-   
+   - Pick a model: `gpt-5.6-sol`, `gpt-5.6-terra`, or `gpt-5.6-luna` (default)
+
    **For Anthropic:**
    - Enter your Anthropic API key
-   
+   - Pick a model: `claude-opus-5`, `claude-sonnet-5`, or `claude-haiku-4-5` (default)
+
    **For Google:**
    - Enter your Google API key
-   
+   - Pick a model: `gemini-3.1-pro-preview`, `gemini-3.7-flash`, `gemini-3.6-flash`, `gemini-3.5-flash-lite` (default), or `gemini-3.1-flash-lite`
+
    **For OpenRouter:**
    - Enter your OpenRouter API key
-   - Enter your desired model name (default: google/gemma-2-9b-it:free)
-   
+   - Enter your desired model name (default: google/gemma-4-26b-a4b-it:free)
+
    **For Ollama:**
    - Ensure Ollama is running
    - Optionally modify the host URL (default: http://localhost:11434)
    - Choose your model (default: llama3.2:1b)
 
-7. Connect the enhanced prompt output to your image generation node
+8. Connect the enhanced prompt output to your image generation node
+
+> **A note on model defaults:** each provider defaults to its cheap, fast tier. Prompt
+> enhancement is a short task and the small models handle it well, so there is usually no
+> reason to pay for a flagship. Bump up to the larger models if you want richer output.
+>
+> Providers rename and retire models fairly often. If a model starts returning a 404, check
+> [`models.py`](models.py) and update the list there.
 
 ## Model Compatibility
 

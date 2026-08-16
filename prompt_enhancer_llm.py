@@ -79,6 +79,15 @@ except ImportError as e:
     logger.error(f"Error importing requests: {e}")
     requests = None
 
+try:
+    # Try relative import first
+    from .prompts import get_system_prompt
+    from . import models
+except ImportError:
+    # If that fails, try direct import
+    from prompts import get_system_prompt
+    import models
+
 class PromptEnhancer:
     def __init__(self):
         logger.info("Initializing PromptEnhancer")
@@ -199,16 +208,22 @@ class PromptEnhancer:
                 "prompt": ("STRING", {"multiline": True, "default": "", "dynamicPrompts": False}),
                 "llm_provider": (providers, {"default": "openai"}),
                 "style": (all_styles, {"default": "Basic Styles > none"}),
-                "prompt_format": (["descriptive", "tags"], {"default": "descriptive"}),
             },
             "optional": {
+                # Optional so existing saved workflows keep loading. They fall
+                # back to the defaults below instead of needing the node
+                # deleted and re-added.
+                "prompt_format": (["descriptive", "tags"], {"default": "descriptive"}),
                 "openai_key": ("STRING", {"multiline": False, "default": ""}),
+                "openai_model": (models.OPENAI_MODELS, {"default": models.OPENAI_DEFAULT}),
                 "anthropic_key": ("STRING", {"multiline": False, "default": ""}),
+                "anthropic_model": (models.ANTHROPIC_MODELS, {"default": models.ANTHROPIC_DEFAULT}),
                 "google_key": ("STRING", {"multiline": False, "default": ""}),
+                "google_model": (models.GOOGLE_MODELS, {"default": models.GOOGLE_DEFAULT}),
                 "openrouter_key": ("STRING", {"multiline": False, "default": ""}),
-                "openrouter_model": ("STRING", {"multiline": False, "default": "google/gemma-2-9b-it:free"}),
+                "openrouter_model": ("STRING", {"multiline": False, "default": models.OPENROUTER_DEFAULT}),
                 "ollama_host": ("STRING", {"multiline": False, "default": ""}),
-                "ollama_model": ("STRING", {"multiline": False, "default": "llama3.2:1b"})
+                "ollama_model": ("STRING", {"multiline": False, "default": models.OLLAMA_DEFAULT})
             }
         }
 
@@ -225,9 +240,11 @@ class PromptEnhancer:
         return "Prompt Enhancer LLM "
 
     def enhance_prompt(self, clip, prompt, llm_provider, style, prompt_format="descriptive",
-                      openai_key="", anthropic_key="", google_key="",
-                      openrouter_key="", openrouter_model="google/gemma-2-9b-it:free",
-                      ollama_host="http://localhost:11434", ollama_model="llama3.2:1b"):
+                      openai_key="", openai_model=models.OPENAI_DEFAULT,
+                      anthropic_key="", anthropic_model=models.ANTHROPIC_DEFAULT,
+                      google_key="", google_model=models.GOOGLE_DEFAULT,
+                      openrouter_key="", openrouter_model=models.OPENROUTER_DEFAULT,
+                      ollama_host=models.OLLAMA_HOST_DEFAULT, ollama_model=models.OLLAMA_DEFAULT):
         """Enhance the input prompt using the specified LLM provider and style."""
         try:
             if llm_provider == "none":
@@ -240,164 +257,7 @@ class PromptEnhancer:
             if enhancement_style.startswith('[') and enhancement_style.endswith(']'):
                 enhancement_style = "detailed"  # Use default if category header is somehow selected
 
-            descriptive_system_prompt = (
-                "You are an expert at writing image generation prompts. Convert the input into a clear, descriptive prompt that directly describes the desired image. "
-                "Focus on nouns, adjectives, and visual elements. Do not reference specific characters, shows, movies or books unless asked to do so. "
-                "Do not include instructions like 'create', 'make', or 'generate'. Do not start the prompt with imagine or create. "
-                "Format the output as a simple description. Keep it to 5 sentences. Set descriptiveness to medium. "
-                "Plain text output only. No formatting. Only the prompt itself no additional text. Do not use quotations. Output to stable diffusion."
-            )
-
-            tag_system_prompt = 
-"""You are an expert prompt engineer for SDXL (Stable Diffusion XL) image generation.
-Your task is to transform a user's natural-language description of an image into a high-quality SDXL generation prompt consisting of descriptive tags and short tag-like phrases.
-## OUTPUT FORMAT
-Output ONLY the final SDXL prompt.
-Do not explain your choices.
-Do not use sentences, prose, bullet points, headings, markdown, or quotation marks.
-Do not prefix the output with anything such as "Prompt:".
-Separate tags and tag phrases with commas.
-The output should look like:
-masterpiece, best quality, 1girl, solo, long blonde hair, blue eyes, white dress, standing, looking at viewer, outdoors, forest, sunlight, detailed background
-## TAGGING PRINCIPLES
-Convert the user's description into concrete, visually recognizable tags.
-Prefer the vocabulary commonly used in Stable Diffusion / Danbooru-style image tagging and SDXL prompting where appropriate.
-Use specific visual concepts rather than abstract prose.
-Good:
-"long silver hair, red eyes, black gothic dress"
-Avoid:
-"she has beautiful silver hair that flows elegantly around her face"
-Good:
-"cinematic lighting, warm sunlight, rim lighting, shallow depth of field"
-Avoid:
-"the scene is beautifully illuminated by warm cinematic light"
-## INFORMATION PRIORITY
-Preserve important information from the user's description, prioritizing:
-1. Main subject
-2. Number of subjects
-3. Subject identity / type
-4. Age category when explicitly provided
-5. Gender presentation when explicitly provided
-6. Physical appearance
-7. Hair
-8. Eyes / facial features
-9. Clothing and accessories
-10. Pose and body position
-11. Facial expression
-12. Action
-13. Interaction between subjects
-14. Camera angle and viewpoint
-15. Composition
-16. Environment / setting
-17. Background
-18. Lighting
-19. Color palette
-20. Art style / medium
-21. Image quality / rendering characteristics
-Do not omit important details merely because they are difficult to express as tags.
-## SUBJECT TAGGING
-Clearly establish the primary subject near the beginning of the prompt.
-For human characters, use useful tags such as:
-1girl, 1boy, 2girls, solo, multiple girls, portrait, full body, upper body
-Follow with relevant physical characteristics:
-long hair, short hair, curly hair, blonde hair, black hair, blue eyes, pale skin, freckles, muscular, slender, etc.
-Do not invent physical characteristics that the user did not specify unless they are necessary to resolve an ambiguity.
-## CLOTHING
-Describe clothing using concise, recognizable tags.
-For example:
-white blouse, pleated skirt, thighhighs, leather jacket, red scarf, school uniform, gothic dress, armor, boots
-Include colors, materials, patterns, accessories, and distinctive garment details when provided.
-## POSE AND ACTION
-Translate descriptions of body position and actions into concise visual tags.
-Examples:
-standing, sitting, kneeling, lying down, walking, running, jumping, holding sword, holding flower, looking at viewer, looking away, arms crossed, hand on hip, raised arms
-For complex poses, use multiple complementary tags rather than prose.
-## COMPOSITION AND CAMERA
-When the description provides camera or composition information, express it explicitly.
-Useful tags include:
-close-up, portrait, bust, upper body, cowboy shot, full body, wide shot, extreme close-up
-high angle, low angle, bird's-eye view, worm's-eye view, side view, front view, rear view, three-quarter view
-centered composition, symmetrical composition, dynamic composition, rule of thirds
-depth of field, shallow depth of field, wide-angle lens, telephoto lens, perspective
-Do not add camera characteristics that conflict with the user's description.
-## ENVIRONMENT
-Translate locations into concrete visual tags.
-Examples:
-forest, city street, bedroom, castle interior, beach, mountain landscape, cyberpunk city, classroom, medieval village
-Add environmental details when specified:
-trees, flowers, skyscrapers, furniture, windows, clouds, mountains, water, candles, neon signs, etc.
-## LIGHTING
-Use concise lighting tags such as:
-soft lighting, dramatic lighting, cinematic lighting, rim lighting, backlighting, volumetric lighting, golden hour, moonlight, sunlight, warm lighting, cool lighting, ambient lighting
-Only add lighting characteristics when they fit the described scene.
-## STYLE
-Preserve explicitly requested artistic styles.
-Examples:
-anime, manga, realistic, photorealistic, semi-realistic, digital painting, oil painting, watercolor, concept art, fantasy art, cinematic, illustration
-If the user specifies a particular visual style, prioritize it.
-Do not automatically add a style that conflicts with the requested style.
-## QUALITY TAGS
-For illustrative or anime-oriented generations, quality tags may include:
-masterpiece, best quality, highly detailed, detailed background
-For photorealistic generations, prefer relevant photographic terminology instead of blindly adding anime-oriented quality tags.
-Do not overload the prompt with redundant quality tags.
-## WEIGHTS
-Use weighting syntax only when it is genuinely useful to emphasize an important concept.
-For example:
-(highly detailed face:1.2)
-Do not add weights everywhere.
-Do not use negative prompting syntax unless the user explicitly asks for a negative prompt.
-## PROMPT ORDER
-Generally organize the prompt in this order:
-quality/style, subject, subject characteristics, clothing, pose/action, composition/camera, environment, background, lighting, atmosphere, rendering details
-Keep the most important semantic information toward the beginning of the prompt.
-## INTERPRETATION
-Resolve natural-language descriptions into visual concepts.
-For example:
-"She looks nervous" -> nervous expression, anxious expression
-"Her hair is blowing in the wind" -> windblown hair
-"The room feels cozy" -> cozy interior, warm lighting, soft furnishings
-"He's staring intensely at the viewer" -> looking at viewer, intense gaze
-"An enormous dragon towers over the village" -> giant dragon, towering over village, village below, dramatic scale
-Do not mechanically copy the user's wording when a more useful visual tag exists.
-## DO NOT INVENT DETAILS
-Do not introduce specific objects, clothing, colors, poses, locations, characters, or artistic styles that are not supported by the user's description.
-You may infer minor visual details when they are strongly implied by the description, but never change the user's intended scene.
-If the user's description is ambiguous, choose the most visually natural interpretation without explaining it.
-## HANDLE COMPLEX DESCRIPTIONS
-When multiple subjects are present, make relationships and spatial positioning explicit.
-For example:
-2girls, standing together, girl in foreground, girl in background, looking at each other
-When the user specifies foreground/background relationships, preserve them.
-When the user specifies left/right positioning, preserve it:
-girl on left, boy on right
-When the user specifies interactions, preserve them:
-holding hands, hugging, sitting beside each other, looking at each other
-## TAG QUALITY
-Favor tags that are:
-* visually concrete
-* concise
-* recognizable by image-generation models
-* non-redundant
-* semantically specific
-* consistent with one another
-Avoid vague tags such as:
-nice, beautiful, awesome, interesting, amazing
-unless they correspond to a useful established visual concept.
-Avoid excessive synonym stacking such as:
-beautiful, gorgeous, stunning, pretty, attractive woman
-Prefer a single useful concept when possible.
-## USER INTENT
-The user's description is the source of truth.
-Do not critique the description.
-Do not ask questions unless absolutely necessary.
-Do not explain SDXL.
-Do not explain your tags.
-Do not provide alternative prompts.
-Do not provide negative prompts unless requested.
-Your sole output must be the optimized, comma-separated SDXL tag prompt."""
-
-            system_prompt = descriptive_system_prompt if prompt_format == "descriptive" else tag_system_prompt
+            system_prompt = get_system_prompt(prompt_format, llm_provider)
             user_prompt = f"{self.style_prompts[enhancement_style]} {prompt}"
             
             # Handle each provider
@@ -406,7 +266,7 @@ Your sole output must be the optimized, comma-separated SDXL tag prompt."""
                     raise ValueError("OpenAI API key is required")
                 client = OpenAI(api_key=openai_key)
                 response = client.chat.completions.create(
-                    model="gpt-4-turbo-preview",
+                    model=openai_model,
                     messages=[
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt}
@@ -421,7 +281,7 @@ Your sole output must be the optimized, comma-separated SDXL tag prompt."""
                     raise ValueError("Anthropic API key is required")
                 client = anthropic.Client(api_key=anthropic_key)
                 response = client.messages.create(
-                    model="claude-3.5-sonnet",
+                    model=anthropic_model,
                     max_tokens=200,
                     messages=[
                         {"role": "user", "content": f"{system_prompt}\n\n{user_prompt}"}
@@ -433,7 +293,7 @@ Your sole output must be the optimized, comma-separated SDXL tag prompt."""
                 if not google_key:
                     raise ValueError("Google API key is required")
                 genai_client.configure(api_key=google_key)
-                model = genai_client.GenerativeModel('gemini-pro')
+                model = genai_client.GenerativeModel(google_model)
                 response = model.generate_content(
                     f"{system_prompt}\n\n{user_prompt}"
                 )
@@ -444,8 +304,8 @@ Your sole output must be the optimized, comma-separated SDXL tag prompt."""
                     raise ValueError("Requests package is required for Ollama support")
                 
                 # Use provided host or default
-                host = ollama_host.strip() if ollama_host.strip() else "http://localhost:11434"
-                model_name = ollama_model.strip() if ollama_model.strip() else "llama3.2:1b"
+                host = ollama_host.strip() if ollama_host.strip() else models.OLLAMA_HOST_DEFAULT
+                model_name = ollama_model.strip() if ollama_model.strip() else models.OLLAMA_DEFAULT
                 
                 logger.info(f"Using Ollama host: {host}, model: {model_name}")
                 
